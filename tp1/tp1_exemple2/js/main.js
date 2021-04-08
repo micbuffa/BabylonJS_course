@@ -10,6 +10,7 @@ function startGame() {
     scene = createScene();
 
     engine.runRenderLoop(() => {
+    
         scene.render();
     });
 }
@@ -22,9 +23,11 @@ function createScene() {
     // a plane
     let ground = BABYLON.MeshBuilder.CreateGround("myGround", {width: 60, height: 60, segments:50}, scene);
     let mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
+    
     mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 1, 0.4);
     // no reflection on the ground, specular color = black...
     mirrorMaterial.specularColor = new BABYLON.Color3.Black;
+
     // 1024 = size of the dynamically generated mirror texture
     mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true);
     // Plane ax + by +cz + d = 0
@@ -40,6 +43,7 @@ function createScene() {
     //let sphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 2, segments: 32}, scene);
     let spheres = [];
     let sphereMaterials = [];
+
     for(let i = 0; i < 10; i++) {
         spheres[i] = BABYLON.MeshBuilder.CreateSphere("mySphere" +i, {diameter: 2, segments: 32}, scene);
         spheres[i].position.x += 3*i -9;
@@ -55,12 +59,14 @@ function createScene() {
     sphereMaterials[0].diffuseColor = new BABYLON.Color3(5, 0, 0);
     sphereMaterials[0].specularColor = new BABYLON.Color3(0, 0, 0);
 
+    
     sphereMaterials[1].ambiantColor = new BABYLON.Color3(0, 0.5, 0);
     sphereMaterials[1].diffuseColor = new BABYLON.Color3(5, 0, 1);
     sphereMaterials[1].specularColor = new BABYLON.Color3(0, 0, 3);
     // concentration of specular reflection, higher = smaller reflection spot
     sphereMaterials[1].specularPower = 256;
 
+    
     sphereMaterials[2].ambiantColor = new BABYLON.Color3(0, 0.5, 0);
     sphereMaterials[2].diffuseColor = new BABYLON.Color3(0, 0, 0);
     // as if the sphere was illuminated from inside
@@ -77,9 +83,10 @@ function createScene() {
     sphereMaterials[5].emissiveColor = new BABYLON.Color3.Red;
     sphereMaterials[5].diffuseTexture.uScale *= 4;
 
+    
     sphereMaterials[6].ambientColor = new BABYLON.Color3(0, .8, 0);
     sphereMaterials[6].diffuseColor = new BABYLON.Color3(1, 0, 0);
-    sphereMaterials[6].alpha = .5;
+    sphereMaterials[6].alpha = 0.5;
 
     sphereMaterials[7].diffuseTexture = new BABYLON.Texture("images/coins.png", scene);
     // With .png textures that have some transparent pixels, we can
@@ -92,10 +99,10 @@ function createScene() {
     sphereMaterials[8].bumpTexture.level = 15.0;
 
     sphereMaterials[9].diffuseTexture = new BABYLON.VideoTexture("video", ["videos/michel.mp4"],scene);
-    //sphereMaterials[9].diffuseTexture.vScale *= -1;
+    sphereMaterials[9].diffuseTexture.vScale *= -1;
 
 
-    let camera = new BABYLON.FreeCamera("myCamera", new BABYLON.Vector3(0, 1, -10), scene);
+    let camera = new BABYLON.FreeCamera("myCamera", new BABYLON.Vector3(0, 1, -30), scene);
    // This targets the camera to scene origin
    //camera.setTarget(BABYLON.Vector3.Zero());
    camera.attachControl(canvas);
@@ -107,14 +114,15 @@ function createScene() {
 
     var light2 = new BABYLON.PointLight("myPointLight2", new BABYLON.Vector3(0, 3, -10), scene);
     light2.intensity = .5;
-    light2.diffuse = new BABYLON.Color3(.5, .5, 1);
+    light2.diffuse = new BABYLON.Color3.Green;
 
+    
     let counter = 0;
 
     scene.registerBeforeRender(() => {
         for(let i = 0; i < spheres.length; i++) {
             spheres[i].position.z = 2*i + Math.sin((i*counter)/2);
-            counter += 0.0001;
+            counter += 0.005;
 
             //sphereMaterials[i].wireframe = true
 

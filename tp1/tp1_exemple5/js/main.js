@@ -18,7 +18,7 @@ function startGame() {
     engine.runRenderLoop(() => {
         let deltaTime = engine.getDeltaTime(); // remind you something ?
 
-        //tank.position.z += -1; // speed should be in unit/s, and depends on
+        //tank.position.z += 1; // speed should be in unit/s, and depends on
                                  // deltaTime !
 
         // if we want to move while taking into account collision detections
@@ -91,8 +91,8 @@ function createFreeCamera(scene) {
 function createFollowCamera(scene, target) {
     let camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
 
-    camera.radius = 20; // how far from the object to follow
-	camera.heightOffset = 4; // how high above the object to place the camera
+    camera.radius = 100; // how far from the object to follow
+	camera.heightOffset = 40; // how high above the object to place the camera
 	camera.rotationOffset = 180; // the viewing angle
 	camera.cameraAcceleration = .1; // how fast to move
 	camera.maxCameraSpeed = 5; // speed limit
@@ -101,7 +101,7 @@ function createFollowCamera(scene, target) {
 }
 
 function createTank(scene) {
-    let tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height:1, depth:6, width:6}, scene);
+    let tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height:2, depth:6, width:6}, scene);
     let tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
     tankMaterial.diffuseColor = new BABYLON.Color3.Red;
     tankMaterial.emissiveColor = new BABYLON.Color3.Blue;

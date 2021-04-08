@@ -164,8 +164,8 @@ function createHeroDude(scene) {
         let heroDude = newMeshes[0];
         heroDude.position = new BABYLON.Vector3(0, 0, 5);  // The original dude
         // make it smaller 
-        heroDude.scaling = new BABYLON.Vector3(0.2  , 0.2, 0.2);
-        heroDude.speed = 0.1;
+        heroDude.scaling = new BABYLON.Vector3(0.2 , 0.2, 0.2);
+        heroDude.speed = 0.5;
 
         // give it a name so that we can query the scene to get it by name
         heroDude.name = "heroDude";
@@ -174,7 +174,7 @@ function createHeroDude(scene) {
         // here we've got only 1. 
         // animation parameters are skeleton, starting frame, ending frame,  a boolean that indicate if we're gonna 
         // loop the animation, speed, 
-        let a = scene.beginAnimation(skeletons[0], 0, 120, true, 1);
+       let a = scene.beginAnimation(skeletons[0], 0, 120, true, 1);
 
         heroDude.move = function() {
             // follow the tank
@@ -182,7 +182,8 @@ function createHeroDude(scene) {
             // let's compute the direction vector that goes from Dude to the tank
             let direction = tank.position.subtract(this.position);
             let distance = direction.length(); // we take the vector that is not normalized, not the dir vector
-            //console.log(distance);
+      
+            console.log(distance);
 
             let dir = direction.normalize();
             // angle between Dude and tank, to set the new rotation.y of the Dude so that he will look towards the tank
@@ -190,14 +191,15 @@ function createHeroDude(scene) {
             let alpha = Math.atan2(-dir.x, -dir.z);
             this.rotation.y = alpha;
 
+            
             // let make the Dude move towards the tank
             if(distance > 30) {
                 //a.restart();   
                 this.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
-            }
-            else {
+            } else {
                 //a.pause();
             }
+            
         }
     });
 }

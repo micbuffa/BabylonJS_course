@@ -125,6 +125,7 @@ function createTank(scene) {
         } 
         //tank.moveWithCollisions(new BABYLON.Vector3(0, yMovement, zMovement));
 
+        
         if(inputStates.up) {
             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, 1*tank.speed));
             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed, tank.speed));
@@ -133,7 +134,7 @@ function createTank(scene) {
             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, -1*tank.speed));
             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-tank.speed, -tank.speed, -tank.speed));
 
-        }    
+        }  
         if(inputStates.left) {
             //tank.moveWithCollisions(new BABYLON.Vector3(-1*tank.speed, 0, 0));
             tank.rotation.y -= 0.02;
@@ -144,7 +145,6 @@ function createTank(scene) {
             tank.rotation.y += 0.02;
             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
         }
-
     }
 
     return tank;

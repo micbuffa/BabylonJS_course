@@ -184,7 +184,7 @@ function createHeroDude(scene) {
         // loop the animation, speed, 
         let a = scene.beginAnimation(skeletons[0], 0, 120, true, 1);
 
-        let hero = new Dude(heroDude, 0.1);
+        let hero = new Dude(heroDude, 0.1, scene);
 
         // make clones
         scene.dudes = [];

@@ -203,18 +203,21 @@ function createTank(scene) {
         
         cannonball.physicsImpostor.applyImpulse(aimForceVector,cannonball.getAbsolutePosition());
 
+
         cannonball.actionManager = new BABYLON.ActionManager(scene);
         // register an action for when the cannonball intesects a dude, so we need to iterate on each dude
         scene.dudes.forEach(dude => {
+            
             cannonball.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 {trigger : BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter : dude.Dude.bounder}, // dude is the mesh, Dude is the instance if Dude class that has a bbox as a property named bounder.
                                                 // see Dude class, line 16 ! dudeMesh.Dude = this;
                 () => {
-                    //console.log("HIT !")
+                    console.log("HIT !");
                     dude.Dude.bounder.dispose();
                     dude.dispose();
                     //cannonball.dispose(); // don't work properly why ? Need for a closure ?
+                    // see http://mainline.i3s.unice.fr/JavaScriptSlides/1Bases.html#85
                 }
             ));
         });
@@ -297,7 +300,7 @@ function doClone(originalMesh, skeletons, id) {
         } else if(skeletons.length === originalMesh.getChildren().length) {
             // each child has its own skeleton
             for(let i = 0; i < myClone.getChildren().length;  i++) {
-                myClone.getChildren()[i].skeleton() = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
+                myClone.getChildren()[i].skeleton = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
             }
             return myClone;
         }

@@ -4,11 +4,8 @@ export default class Dude {
         this.id = id;
         this.scene = scene;
         this.scaling = scaling;
+        this.speed = speed;
 
-        if(speed)
-            this.speed = speed;
-        else
-            this.speed = 1;
 
         // in case, attach the instance to the mesh itself, in case we need to retrieve
         // it after a scene.getMeshByName that would return the Mesh
@@ -60,7 +57,7 @@ export default class Dude {
         if(distance > 30) {
             //a.restart();   
             // Move the bounding box instead of the dude....
-            this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+           this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         }
         else {
             //a.pause();

@@ -233,7 +233,7 @@ function doClone(originalMesh, skeletons, id) {
         } else if(skeletons.length === originalMesh.getChildren().length) {
             // each child has its own skeleton
             for(let i = 0; i < myClone.getChildren().length;  i++) {
-                myClone.getChildren()[i].skeleton() = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
+                myClone.getChildren()[i].skeleton = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
             }
             return myClone;
         }

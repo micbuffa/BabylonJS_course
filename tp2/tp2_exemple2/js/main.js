@@ -165,7 +165,7 @@ function createTank(scene) {
 
     // to avoid firing too many cannonball rapidly
     tank.canFire = true;
-    tank.fireAfter = 0.1; // in seconds
+    tank.fireAfter = 0.3; // in seconds
 
     tank.fire = function() {
         if(!inputStates.space) return;
@@ -175,6 +175,7 @@ function createTank(scene) {
         // ok, we fire, let's put the above property to false
         this.canFire = false;
 
+        
         // let's be able to fire again after a while
         setTimeout(() => {
             this.canFire = true;
@@ -186,8 +187,10 @@ function createTank(scene) {
         cannonball.material.diffuseTexture = new BABYLON.Texture("images/Fire.jpg", scene)
 
         let pos = this.position;
+
         // position the cannonball above the tank
         cannonball.position = new BABYLON.Vector3(pos.x, pos.y+1, pos.z);
+
         // move cannonBall position from above the center of the tank to above a bit further than the frontVector end (5 meter s further)
         cannonball.position.addInPlace(this.frontVector.multiplyByFloats(5, 5, 5));
 
@@ -204,6 +207,7 @@ function createTank(scene) {
         cannonball.physicsImpostor.applyImpulse(aimForceVector,cannonball.getAbsolutePosition());
 
         // Make the cannonball disappear after 3s
+        
         setTimeout(() => {
             cannonball.dispose();
         }, 3000);
@@ -280,7 +284,7 @@ function doClone(originalMesh, skeletons, id) {
         } else if(skeletons.length === originalMesh.getChildren().length) {
             // each child has its own skeleton
             for(let i = 0; i < myClone.getChildren().length;  i++) {
-                myClone.getChildren()[i].skeleton() = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
+                myClone.getChildren()[i].skeleton = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
             }
             return myClone;
         }

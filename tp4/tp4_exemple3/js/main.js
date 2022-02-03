@@ -417,10 +417,7 @@ function createTank(scene) {
       this.frontVector.z * powerOfFire
     );
 
-    cannonball.physicsImpostor.applyImpulse(
-      aimForceVector,
-      cannonball.getAbsolutePosition()
-    );
+    cannonball.physicsImpostor.applyImpulse(aimForceVector, cannonball.getAbsolutePosition());
 
     cannonball.actionManager = new BABYLON.ActionManager(scene);
     // register an action for when the cannonball intesects a dude, so we need to iterate on each dude

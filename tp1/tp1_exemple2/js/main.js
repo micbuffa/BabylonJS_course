@@ -58,15 +58,13 @@ function createScene() {
     sphereMaterials[0].ambiantColor = new BABYLON.Color3(0, 0.5, 0);
     sphereMaterials[0].diffuseColor = new BABYLON.Color3(5, 0, 0);
     sphereMaterials[0].specularColor = new BABYLON.Color3(0, 0, 0);
-
-    
+   
     sphereMaterials[1].ambiantColor = new BABYLON.Color3(0, 0.5, 0);
     sphereMaterials[1].diffuseColor = new BABYLON.Color3(5, 0, 1);
     sphereMaterials[1].specularColor = new BABYLON.Color3(0, 0, 3);
     // concentration of specular reflection, higher = smaller reflection spot
     sphereMaterials[1].specularPower = 256;
 
-    
     sphereMaterials[2].ambiantColor = new BABYLON.Color3(0, 0.5, 0);
     sphereMaterials[2].diffuseColor = new BABYLON.Color3(0, 0, 0);
     // as if the sphere was illuminated from inside

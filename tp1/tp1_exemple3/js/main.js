@@ -37,6 +37,8 @@ function createGround(scene) {
     function onGroundCreated() {
         const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg");
+        groundMaterial.diffuseTexture.uScale = 60;
+        groundMaterial.diffuseTexture.vScale = 60;
         ground.material = groundMaterial;
         // to be taken into account by collision detection
         ground.checkCollisions = true;

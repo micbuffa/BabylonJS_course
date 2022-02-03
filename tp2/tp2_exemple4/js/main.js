@@ -227,7 +227,7 @@ function createTank(scene) {
         // Make the cannonball disappear after 3s
         setTimeout(() => {
             cannonball.dispose();
-        }, 3000);
+        }, 3000           );
     }
 
     // to avoid firing too many cannonball rapidly

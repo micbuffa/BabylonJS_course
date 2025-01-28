@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>HAVOK Demo</title>
+    <!-- Main StyleSheet -->
+    <link rel="stylesheet" href="./css/main.css?id=54">
+    <!-- Bootstrap 5.0.2 -->
+ head>
+
+<body>
+    <!-- Loading DIV -->
+    <div id="loadingDiv">
+        <p id="loadingText" class="font-weight-light">L O A D I N G  -   H A V O K</p>
+        <span class="loader"></span>
+    </div>
+
+    <!-- BabylonJS Render Canvas -->
+    <canvas id="renderCanvas"></canvas>
+    
+    <!-- JS Libraries -->
+    <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
+    <script src="./node_modules/babylonjs/babylon.js"></script> 
+    <script src="./node_modules/babylonjs-loaders/babylonjs.loaders.min.js"></script> 
+    <script src="./node_modules/pepjs/dist/pep.js"></script>
+   
+    <!-- JS Main App -->
+    <script src="./js/controller.js?id=132"></script>
+    <script src="./js/main.js?id=132"></script>
+
+    
+ 
+    <!-- STATS -->
+    <div id="stats-div"> 
+        <p id="stats-text">FPS: 60</p>
+    </div>
+
+    <!-- Test Buttons -->
+    <div class="buttons">
+        <button id="customBT" type="button" class="btn btn-outline-info" onclick="dropSpheres()">DROP OBJECTS</button>
+        <button id="customBT" type="button" class="btn btn-outline-info" onclick="clearScene()">CLEAR</button>
+    </div>
+
+</body>
+</html>

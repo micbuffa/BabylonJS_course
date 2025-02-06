@@ -1,22 +1,24 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Texture, FreeCamera, FollowCamera, StandardMaterial, Color3, HavokPlugin, PhysicsAggregate, PhysicsShapeType, PhysicsMotionType } from "@babylonjs/core";
-
-
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Texture, FreeCamera, FollowCamera, StandardMaterial, Color3, HavokPlugin, PhysicsAggregate, PhysicsShapeType, PhysicsMotionType, PBRMaterial, SceneLoader } from "@babylonjs/core";
 
 import Tank from "./tank";
+import Dude from "./Dude"
+
 import HavokPhysics from "@babylonjs/havok";
 
 class App {
     engine: Engine;
-    scene: Scene;v
+    scene: Scene; v
     canvas: HTMLCanvasElement;
     inputStates: {};
     freeCamera: FreeCamera;
     tank: Tank;
+    hero: Dude;
     followCamera: FollowCamera;
     // Physics engine
     havokInstance;
+    dudes: Dude[];
 
     constructor() {
         // create the canvas html element and attach it to the webpage
@@ -30,12 +32,6 @@ class App {
 
         // initialize babylon scene and engine
         this.engine = new Engine(this.canvas, true);
-
-
-
-      
-
-       
     }
 
     async start() {
@@ -45,7 +41,7 @@ class App {
     }
 
     //async getInitializedHavok() {
-        //return await HavokPhysics();
+    //return await HavokPhysics();
     //}
 
     private async getInitializedHavok() {
@@ -73,18 +69,27 @@ class App {
     gameLoop() {
         const divFps = document.getElementById("fps");
 
-     // run the main render loop
-     this.engine.runRenderLoop(() => {
-        this.scene.render();
+        // run the main render loop
+        this.engine.runRenderLoop(() => {
+            this.scene.render();
 
-        this.tank.move(this.inputStates);
 
-        divFps.innerHTML = this.engine.getFps().toFixed() + " fps";
+            // MOVE ALL DUDES
+            if (this.dudes) {
+                for (let i = 0; i < this.dudes.length; i++) {
+                    this.dudes[i].move(this.scene);
+                }
+            }
 
-    });
+            this.tank.move(this.inputStates);
+            this.tank.fire(this.inputStates, this.scene, this.dudes);
+
+            divFps.innerHTML = this.engine.getFps().toFixed() + " fps";
+
+        });
     }
 
-     createScene() {
+    createScene() {
         let scene = new Scene(this.engine);
 
         // initialize the plugin using the HavokPlugin constructor
@@ -99,10 +104,12 @@ class App {
         // make the sphere red
         let sphereMaterial = new StandardMaterial("sphereRed", scene);
         sphereMaterial.diffuseColor = new Color3(1, 0, 0);
-        sphere.material = sphereMaterial; 
+        sphere.material = sphereMaterial;
 
         this.createGround(scene);
         this.createTank(scene);
+
+        this.createHeroDude(scene);
 
         // Use free camera for the moment
         //this.freeCamera = this.createFreeCamera(scene, this.canvas);
@@ -112,24 +119,192 @@ class App {
         scene.activeCamera = this.followCamera;
 
         // Une box gérée par le moteur physique
-        let boxDebug = MeshBuilder.CreateBox("boxDebug", { width: 5, depth:5, height: 5 });
+        let boxDebug = MeshBuilder.CreateBox("boxDebug", { width: 5, depth: 5, height: 5 });
         boxDebug.position = new Vector3(10, 30, 5);
-        
-        // Create a sphboxere shape and the associated body. Size will be determined automatically.
-        const boxAggregate = new PhysicsAggregate(boxDebug, PhysicsShapeType.BOX, { mass: .25, friction: 0.05, restitution: 0.3 }, scene);
+
+        // Create a box shape and the associated body. Size will be determined automatically.
+        const boxAggregate = new PhysicsAggregate(boxDebug, PhysicsShapeType.BOX, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
 
 
+        this.createBoxes(300, this.scene);
         // TRY TO CREATE MORE BOXES !!!!    
 
         return scene;
     }
 
-    
+    createBoxes(nb, scene) {
+
+        // Create three materials for the boxes
+        let materials = [];
+        let mat1 = new PBRMaterial("mat1", scene);
+        mat1.albedoColor = new Color3(0.8, 0.5, 0.5);
+        mat1.roughness = 0.4;
+        mat1.metallic = 1;
+        materials.push(mat1);
+
+
+        let mat2 = new PBRMaterial("mat2", scene);
+        mat2.albedoColor = new Color3(0.5, 0.8, 0.5);
+        mat2.roughness = 0.4;
+        mat2.metallic = 1;
+        materials.push(mat2);
+
+        let mat3 = new PBRMaterial("mat3", scene);
+        mat3.albedoColor = new Color3(0.5, 0.5, 0.8);
+        mat3.roughness = 0.4;
+        mat3.metallic = 1;
+        materials.push(mat3);
+
+        for (let i = 0; i < nb; i++) {
+            let typeOfMesh = Math.floor(Math.random() * 5);
+            let indexMaterial = Math.floor(Math.random() * 3);
+
+            switch (typeOfMesh) {
+                case 0:
+                    // BOX
+                    // create w, h, d with integer random values between 1 and 5
+                    const w = Math.floor(Math.random() * 5) + 1;
+                    const h = Math.floor(Math.random() * 5) + 1;
+                    const d = Math.floor(Math.random() * 5) + 1;
+
+                    let box = MeshBuilder.CreateBox("box" + i, { width: w, depth: d, height: h }, this.scene);
+                    box.material = materials[indexMaterial];
+                    box.position = new Vector3(10, 30, 5);
+                    //box.checkCollisions = true;
+                    // Create a static box shape.
+                    const boxAggregate = new PhysicsAggregate(box, PhysicsShapeType.BOX, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
+                    break;
+                case 1:
+                    // sphere
+                    // create diameter with integer random values between 1 and 5
+                    const diameter = Math.floor(Math.random() * 5) + 1;
+                    let sphere = MeshBuilder.CreateSphere("sphere" + i, { diameter: diameter }, this.scene);
+                    sphere.material = materials[indexMaterial];
+                    sphere.position = new Vector3(10, 30, 5);
+                    // Create a static sphere shape.
+                    const sphereAggregate = new PhysicsAggregate(sphere, PhysicsShapeType.SPHERE, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
+                    break;
+                case 2:
+                    // cylinder
+                    // create diameter with integer random values between 1 and 5
+                    const diam = Math.floor(Math.random() * 5) + 1;
+                    // height is 2 times the diameter
+                    const height = diam * 2;
+                    let cylinder = MeshBuilder.CreateCylinder("cylinder" + i, { diameter: diam, height: height }, this.scene);
+                    cylinder.material = materials[indexMaterial];
+                    cylinder.position = new Vector3(10, 30, 5);
+                    // Create a static cylinder shape.
+                    const cylinderAggregate = new PhysicsAggregate(cylinder, PhysicsShapeType.CYLINDER, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
+                    break;
+                case 3:
+                    // torus
+                    // create diameter with integer random values between 1 and 5
+                    const diam1 = Math.floor(Math.random() * 5) + 1;
+                    // thickness is 1/2 the diameter
+                    const thickness = diam1 / 2;
+                    let torus = MeshBuilder.CreateTorus("torus" + i, { diameter: diam1, thickness: thickness }, this.scene);
+                    torus.material = materials[indexMaterial];
+                    torus.position = new Vector3(10, 30, 5);
+                    // Create a static torus shape.
+                    const torusAggregate = new PhysicsAggregate(torus, PhysicsShapeType.CONVEX_HULL, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
+                    break;
+                case 4:
+                    // Create GOLDBERG
+                    // create diameter with integer random values between 1 and 5
+                    const diam2 = Math.floor(Math.random() * 5) + 1;
+
+                    let goldberg = MeshBuilder.CreateGoldberg("goldberg" + i, { size: diam2 }, this.scene);
+                    goldberg.material = materials[indexMaterial];
+                    goldberg.position = new Vector3(10, 30, 5);
+                    // Create an aggregate
+                    const goldbergAggregate = new PhysicsAggregate(goldberg, PhysicsShapeType.CONVEX_HULL, { mass: .25, friction: 0.75, restitution: 0.3 }, scene);
+                    break;
+            }
+
+        }
+    }
+
     createTank(scene) {
         this.tank = new Tank(scene);
     }
 
+    createHeroDude(scene) {
+        // load the Dude 3D animated model
+        // name, folder, skeleton name 
+        SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, (newMeshes, particleSystems, skeletons) => {
+            let heroDude = newMeshes[0];
+            heroDude.position = new Vector3(0, 0, 5);  // The original dude
+            // make it smaller 
+            heroDude.scaling = new Vector3(0.2, 0.2, 0.2);
+            //heroDude.speed = 0.1;
 
+            // give it a name so that we can query the scene to get it by name
+            heroDude.name = "heroDude";
+
+            let dudeSpeed = 10;
+            let animationSpeed = dudeSpeed / 10;
+            // there might be more than one skeleton in an imported animated model. Try console.log(skeletons.length)
+            // here we've got only 1. 
+            // animation parameters are skeleton, starting frame, ending frame,  a boolean that indicate if we're gonna 
+            // loop the animation, speed, 
+            let a = scene.beginAnimation(skeletons[0], 0, 120, true, animationSpeed);
+
+            this.hero = new Dude(heroDude, a, scene, 20);
+
+            // Make clones
+            // make clones
+            this.dudes = [];
+            this.dudes.push(this.hero);
+            for (let i = 0; i < 10; i++) {
+                let dudeMeshClone = this.doClone(heroDude, skeletons, i);
+                a = scene.beginAnimation(dudeMeshClone.skeleton, 0, 120, true, animationSpeed);
+
+                // Create instance with move method etc.
+                 this.dudes.push(new Dude(dudeMeshClone, a, scene, dudeSpeed));
+                // remember that the instances are attached to the meshes
+                // and the meshes have a property "Dude" that IS the instance
+                // see render loop then....
+            }
+
+        });
+    }
+
+     doClone(originalMesh, skeletons, id) {
+        let myClone;
+        let xrand = Math.floor(Math.random()*500 - 250);
+        let zrand = Math.floor(Math.random()*500 - 250);
+    
+        myClone = originalMesh.clone("clone_" + id);
+        myClone.position = new Vector3(xrand, 0, zrand);
+    
+        if(!skeletons) return myClone;
+    
+        // The mesh has at least one skeleton
+        if(!originalMesh.getChildren()) {
+            myClone.skeleton = skeletons[0].clone("clone_" + id + "_skeleton");
+            return myClone;
+        } else {
+            if(skeletons.length === 1) {
+                // the skeleton controls/animates all children, like in the Dude model
+                let clonedSkeleton = skeletons[0].clone("clone_" + id + "_skeleton");
+                myClone.skeleton = clonedSkeleton;
+                let nbChildren = myClone.getChildren().length;
+    
+                for(let i = 0; i < nbChildren;  i++) {
+                    myClone.getChildren()[i].skeleton = clonedSkeleton
+                }
+                return myClone;
+            } else if(skeletons.length === originalMesh.getChildren().length) {
+                // each child has its own skeleton
+                for(let i = 0; i < myClone.getChildren().length;  i++) {
+                    myClone.getChildren()[i].skeleton = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
+                }
+                return myClone;
+            }
+        }
+    
+        return myClone;
+    }
 
 
     createFreeCamera(scene, canvas) {
@@ -179,9 +354,9 @@ class App {
             ground.checkCollisions = true;
             //groundMaterial.wireframe=true;
 
-               // Create a static box shape.
-        const groundAggregate = new PhysicsAggregate(ground, PhysicsShapeType.MESH, { mass: 0, friction: 0.7, restitution: 0.2 }, scene);
-        groundAggregate.body.setMotionType(PhysicsMotionType.STATIC);
+            // Create a static box shape.
+            const groundAggregate = new PhysicsAggregate(ground, PhysicsShapeType.MESH, { mass: 0, friction: 0.7, restitution: 0.2 }, scene);
+            groundAggregate.body.setMotionType(PhysicsMotionType.STATIC);
 
         }
         return ground;
@@ -245,6 +420,8 @@ class App {
                 inputStates.down = true;
             } else if (event.key === " ") {
                 inputStates.space = true;
+            } else if (event.key === "f") {
+                inputStates.keyF = true;
             }
         }, false);
 
@@ -260,7 +437,10 @@ class App {
                 inputStates.down = false;
             } else if (event.key === " ") {
                 inputStates.space = false;
+            } else if (event.key === "f") {
+                inputStates.keyF = false;
             }
+
         }, false);
     }
 }

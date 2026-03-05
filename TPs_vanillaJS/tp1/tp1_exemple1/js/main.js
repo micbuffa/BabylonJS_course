@@ -23,7 +23,7 @@ function createScene() {
     let scene = new BABYLON.Scene(engine);
     
     // background
-    scene.clearColor = new BABYLON.Color3(1, 0, 0);
+    scene.clearColor = new BABYLON.Color3(1, 1, 1);
     
     // Create some objects 
     // params = number of horizontal "stripes", diameter...
@@ -44,7 +44,7 @@ function createScene() {
     let light = new BABYLON.HemisphericLight("myLight", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.3;
     // color of the light
-    light.diffuse = new BABYLON.Color3(1, 1, 1);
+    light.diffuse = new BABYLON.Color3(1, 0, 0);
     return scene;
 }
 

@@ -20,8 +20,13 @@ function startGame() {
     let tank = scene.getMeshByName("heroTank");
 
     engine.runRenderLoop(() => {
+        // deltaTime is the time elapsed since the last frame, in ms
         let deltaTime = engine.getDeltaTime(); // remind you something ?
 
+        // on calcule dist qui correspond à la distance à parcourir pour le tank à chaque frame, 
+        // en fonction du temps écoulé depuis la dernière frame
+        // ca revient à avoir une vitesse de déplacement du tank en unité/s, 
+        // et à faire en sorte que le déplacement indépendant du nombre de frames/s
         let dist = 1 * deltaTime / 30; // 30 is a divisor to ensure the speed is not too high
         //tank.position.z += 1; // speed should be in unit/s, and depends on
                                  // deltaTime !
@@ -31,11 +36,12 @@ function startGame() {
         console.log("Y position of tank : " + tank.position.y);
         if(tank.position.y < 1.5) {
             tank.moveWithCollisions(new BABYLON.Vector3(0, 0, dist));
+            //tank.position.z += 1;
         }
 
         // Change the angle of the follow camera
-        cameraAngle += 1;
-        followCamera.rotationOffset = cameraAngle;
+        //cameraAngle += 1;
+        //followCamera.rotationOffset = cameraAngle;
 
         scene.render();
     });

@@ -89,7 +89,7 @@ function createScene() {
 
     sphereMaterials[7].diffuseTexture = new BABYLON.Texture("images/coins.png", scene);
     // With .png textures that have some transparent pixels, we can
-    // have the texture "see through" if we set the hasAlpha property to true
+    // have the texture "see through" if we set th@e hasAlpha property to true
     sphereMaterials[7].diffuseTexture.hasAlpha = true;
     sphereMaterials[7].emissiveColor = new BABYLON.Color3.Red;
 

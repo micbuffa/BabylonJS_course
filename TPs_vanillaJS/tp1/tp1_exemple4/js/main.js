@@ -32,11 +32,15 @@ function createScene() {
 function createGround(scene) {
     const groundOptions = { width:2000, height:2000, subdivisions:200, minHeight:0, maxHeight:100, onReady: onGroundCreated};
     //scene is optional and defaults to the current scene
-    const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap("gdhm", 'images/hmap1.png', groundOptions, scene); 
+    const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap("gdhm", 'images/hmap2.jpg', groundOptions, scene); 
 
     function onGroundCreated() {
         const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg");
+        // adjust u and v scale of the texture (default is 1)
+        // so that it does not look blurry on the ground
+        groundMaterial.diffuseTexture.uScale = 100;
+        groundMaterial.diffuseTexture.vScale = 100;
         ground.material = groundMaterial;
         // to be taken into account by collision detection
         ground.checkCollisions = true;
